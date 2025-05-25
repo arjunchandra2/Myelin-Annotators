@@ -26,62 +26,54 @@ batch1_decode = {
     4: {"Samples_ID": 8572, "Category": 2, "PMI": 17.5},
     16: {"Samples_ID": 21499, "Category": 3, "PMI": 17},
     15: {"Samples_ID": 7597, "Category": 3, "PMI": 13.5},
-    2: {"Samples_ID": 8095, "Category": 3, "PMI": 13.5}
+    2: {"Samples_ID": 8095, "Category": 3, "PMI": 13.5},
 }
 
 batch2_decode = {
     4: {"Samples_ID": 8790, "Category": 1, "PMI": 17.75},
     1: {"Samples_ID": 301181, "Category": 3, "PMI": 13.92},
     2: {"Samples_ID": 6912, "Category": 2, "PMI": 7},
-    3: {"Samples_ID": 7019, "Category": 2, "PMI": 18.75}
+    3: {"Samples_ID": 7019, "Category": 2, "PMI": 18.75},
 }
 
-batch3_decode = {
-    5: {"Samples_ID": 34929, "Category": 3, "PMI": 4}
-}
-
-
+batch3_decode = {5: {"Samples_ID": 34929, "Category": 3, "PMI": 4}}
 
 
 def main():
-    
-    #Specify path to data dir (.mat files) and the batch
-    data_dir = '/projectnb/npbssmic/ac25/Myelin_paper_final/combined_annotations_0.2/3rd_batch'
+
+    # Specify path to data dir (.mat files) and the batch
+    data_dir = (
+        "/projectnb/npbssmic/ac25/Myelin_paper_final/combined_annotations_0.2/3rd_batch"
+    )
     save_path = "/projectnb/npbssmic/ac25/Myelin_paper_final/defect_counts_combined_3rd_batch_0.2.xlsx"
     batch = 3
 
     num_images = 0
 
-    rows = [] 
+    rows = []
 
     for file in os.listdir(data_dir):
-        if file.endswith('.mat'):
+        if file.endswith(".mat"):
             num_images += 1
-            
-            #Get fig code for current image 
+
+            # Get fig code for current image
             fig_code = int(file[:2])
 
-            #Now we must get the counts of each type of bbox, for this we don't really need bbox class
+            # Now we must get the counts of each type of bbox, for this we don't really need bbox class
             annotations = utils.load_annotations(os.path.join(data_dir, file))
 
-            class_counts = {
-                "Defect": 0,
-                "Swelling": 0,
-                "Vesicle": 0,
-                "Mixed": 0
-            }
+            class_counts = {"Defect": 0, "Swelling": 0, "Vesicle": 0, "Mixed": 0}
 
-            for class_type in annotations['class_type']:
+            for class_type in annotations["class_type"]:
                 if class_type in class_counts:
-                    class_counts[class_type] += 1        
+                    class_counts[class_type] += 1
 
             if batch == 1:
                 metadata = batch1_decode[fig_code]
-            elif batch == 2: 
+            elif batch == 2:
                 metadata = batch2_decode[fig_code]
             elif batch == 3:
                 metadata = batch3_decode[fig_code]
-
 
             row_data = {
                 "Samples_ID": metadata["Samples_ID"],
@@ -91,7 +83,7 @@ def main():
                 "Vesicle": class_counts["Vesicle"],
                 "Mixed": class_counts["Mixed"],
                 "PMI": metadata["PMI"],
-                "Filename": file
+                "Filename": file,
             }
 
             rows.append(row_data)
@@ -101,6 +93,5 @@ def main():
     print(f"Excel file {save_path} saved successfully.")
     print(f"Processed {num_images} images.")
 
-           
 
 main()
